@@ -1,9 +1,16 @@
 package edu.hm.dako.chat.server;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import edu.hm.dako.chat.UdpClient.UdpClient;
+import edu.hm.dako.chat.auditlogServer.AuditlogServer;
 import javafx.stage.WindowEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,6 +118,11 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 		startTimeField = createNotEditableTextfield("");
 		receivedRequests = createNotEditableTextfield("");
 		loggedInClients = createNotEditableTextfield("");
+		AuditlogServer server = new AuditlogServer(50001);
+		UdpClient client = new UdpClient(50001);
+		ExecutorService executorService = Executors.newFixedThreadPool(2);
+		executorService.submit(client);
+		executorService.submit(server);
 
 	}
 
@@ -328,7 +340,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 
 			@Override
 			public void handle(ActionEvent event) {
-
+				AuditlogServer adls = new AuditlogServer(50001);
+				adls.sendDummyMessage("das ist ein test ob die daten weitergegeben werden!!!");
 				startable = true;
 				// Eingabeparameter einlesen
 				int serverPort = readServerPort();
