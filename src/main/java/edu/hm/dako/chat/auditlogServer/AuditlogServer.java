@@ -13,7 +13,6 @@ public class AuditlogServer implements Runnable {
 
   public void sendDummyMessage (String message) {
     try{
-
       DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getLocalHost(), this.clientPort);
       serverSocket.send(datagramPacket);
     } catch (SocketException e){
