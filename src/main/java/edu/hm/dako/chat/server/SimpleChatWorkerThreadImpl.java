@@ -129,7 +129,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			log.debug("Login-Response-PDU an Client " + userName + " gesendet");
 
 			// Zustand des Clients aendern
-			clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED);
+			clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); //TODO AuditLog - hier endet der LoginRequest (mk)
 
 		} else {
 			// User bereits angemeldet, Fehlermeldung an Client senden,
@@ -186,7 +186,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			}
 
 			clients.changeClientStatus(receivedPdu.getUserName(),
-					ClientConversationStatus.UNREGISTERED);
+					ClientConversationStatus.UNREGISTERED); //TODO AuditLog - hier endet LogoutRequests (mk)
 
 			// Logout Response senden
 			sendLogoutResponse(receivedPdu.getUserName());
@@ -256,7 +256,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 				try {
 					client.getConnection().send(responsePdu);
 					log.debug(
-							"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
+							"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet"); //TODO AuditLog - hier endet ChatRequest (mk)
 				} catch (Exception e) {
 					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName()
 							+ " nicht moeglich");
