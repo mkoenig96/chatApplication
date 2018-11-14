@@ -223,7 +223,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 					if ((client != null)
 							&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
 						pdu.setUserName(client.getUserName());
-						client.getConnection().send(pdu);
+						client.getConnection().send(pdu); //TODO hier wird die message an die Clients gesendet (mk)
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());
 						eventCounter.getAndIncrement();
