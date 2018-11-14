@@ -1,9 +1,17 @@
 package edu.hm.dako.chat.server;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import edu.hm.dako.chat.UdpClient.UdpClient;
+import edu.hm.dako.chat.auditlogServer.AuditlogServer;
 import javafx.stage.WindowEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +61,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	static final String DEFAULT_RECEIVEBUFFER_SIZE = "300000";
 	static final String MAX_SENDBUFFER_SIZE = "500000";
 	static final String MAX_RECEIVEBUFFER_SIZE = "500000";
+	static AuditlogServer adls;
+	static UdpClient client;
 
 	final VBox pane = new VBox(5);
 
@@ -105,12 +115,17 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	/**
 	 * Konstruktion der ServerGUI
 	 */
-	public ChatServerGUI() {
+	public ChatServerGUI() throws SocketException {
 		loggedInClientCounter = new AtomicInteger(0);
 		requestCounter = new AtomicInteger(0);
 		startTimeField = createNotEditableTextfield("");
 		receivedRequests = createNotEditableTextfield("");
 		loggedInClients = createNotEditableTextfield("");
+		adls = new AuditlogServer(50001);
+		client = new UdpClient(50001);
+		ExecutorService executorService = Executors.newFixedThreadPool(2);
+		executorService.submit(client);
+		executorService.submit(adls);
 
 	}
 
@@ -328,7 +343,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 
 			@Override
 			public void handle(ActionEvent event) {
-
+				adls.sendDummyMessage("test test 123");
 				startable = true;
 				// Eingabeparameter einlesen
 				int serverPort = readServerPort();
@@ -375,7 +390,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				adls.sendDummyMessage("Server wurde beendet");
 				try {
 					chatServer.stop();
 				} catch (Exception e) {
