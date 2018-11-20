@@ -158,7 +158,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 	/**
 	 * Bearbeitung aller vom Server ankommenden Nachrichten
 	 */
-	public void run() {
+	public void run() { //TODO: Start des Threads für Nachricht - hier könnte man auch gleich den Thread-Namen bekommen (mk)
 
 		ChatPDU receivedPdu = null;
 

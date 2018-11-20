@@ -31,9 +31,9 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 	}
 
 	@Override
-	public void run() {
+	public void run() { //TODO: Hier wird der Thread erzeugt serverseitig (mk)
 		log.debug(
-				"ChatWorker-Thread erzeugt, Threadname: " + Thread.currentThread().getName());
+				"ChatWorker-Thread erzeugt, Threadname: " + Thread.currentThread().getName()); //TODO: Hier bekommen wir den Thread-Namen serverseitig (mk)
 		while (!finished && !Thread.currentThread().isInterrupted()) {
 			try {
 				// Warte auf naechste Nachricht des Clients und fuehre
