@@ -1,17 +1,12 @@
 package edu.hm.dako.chat.server;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import edu.hm.dako.chat.UdpClient.UdpClient;
-import edu.hm.dako.chat.auditlogServer.AuditlogServer;
+import edu.hm.dako.chat.clients.UdpConnector;
 import javafx.stage.WindowEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,8 +56,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	static final String DEFAULT_RECEIVEBUFFER_SIZE = "300000";
 	static final String MAX_SENDBUFFER_SIZE = "500000";
 	static final String MAX_RECEIVEBUFFER_SIZE = "500000";
-	static AuditlogServer adls;
-	static UdpClient client;
+
 
 	final VBox pane = new VBox(5);
 
@@ -105,6 +99,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	private static AtomicInteger loggedInClientCounter;
 	private static AtomicInteger requestCounter;
 
+	private UdpConnector udpConnection;
+
 	// Daten, die beim Start der GUI uebergeben werden
 	private ServerStartData data = new ServerStartData();
 
@@ -121,12 +117,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 		startTimeField = createNotEditableTextfield("");
 		receivedRequests = createNotEditableTextfield("");
 		loggedInClients = createNotEditableTextfield("");
-		adls = new AuditlogServer(50001);
-		client = new UdpClient(50001);
-		ExecutorService executorService = Executors.newFixedThreadPool(2);
-		executorService.submit(client);
-		executorService.submit(adls);
-
+		this.udpConnection = new UdpConnector(40600);
 	}
 
 	public static void main(String[] args) {
@@ -150,6 +141,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 					ExceptionHandler.logException(var3);
 				}
 			}
+
 		});
 
 		pane.setStyle("-fx-background-color: cornsilk");
@@ -340,11 +332,10 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	 */
 	private void reactOnStartButton() {
 		startButton.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-				adls.sendDummyMessage("test test 123");
 				startable = true;
+				udpConnection.sendMessage( "\n" + new Date().toString() + " Server wurde gestartet" );
 				// Eingabeparameter einlesen
 				int serverPort = readServerPort();
 				int sendBufferSize = readSendBufferSize();
@@ -390,8 +381,8 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				adls.sendDummyMessage("Server wurde beendet");
 				try {
+					udpConnection.sendMessage(new Date().toString() + " Server wurde gestopt" );
 					chatServer.stop();
 				} catch (Exception e) {
 					log.error("Fehler beim Stoppen des Chat-Servers");

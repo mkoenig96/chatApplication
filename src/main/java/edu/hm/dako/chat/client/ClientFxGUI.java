@@ -54,7 +54,6 @@ public class ClientFxGUI extends Application implements ClientUserInterface {
 	 * @return Referenz auf Kommunikationsobjekt
 	 */
 	public ClientImpl createCommunicator(String serverType, int port, String host) {
-
 		communicator = new ClientImpl(this, port, host, serverType);
 		return communicator;
 	}
