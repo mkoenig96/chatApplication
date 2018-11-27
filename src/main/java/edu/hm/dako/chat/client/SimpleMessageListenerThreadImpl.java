@@ -19,18 +19,15 @@ import edu.hm.dako.chat.connection.Connection;
  */
 public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThread {
 
-	private UdpConnector udpConnect;
-
 
 	private static Log log = LogFactory.getLog(SimpleMessageListenerThreadImpl.class);
-	private static int instanceCounter = 0;
+
 
 	public SimpleMessageListenerThreadImpl(ClientUserInterface userInterface,
 			Connection con, SharedClientData sharedData) throws SocketException {
 
 		super(userInterface, con, sharedData);
-		instanceCounter++;
-		udpConnect = new UdpConnector(50000 + instanceCounter);
+
 	}
 
 	@Override
@@ -174,6 +171,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 		ChatPDU receivedPdu = null;
 
 		log.debug("SimpleMessageListenerThread gestartet");
+
 		udpConnect.sendMessage(new Date() + " " + "Client-Thread " + "'" + Thread.currentThread().getName() + "'" + " has been started");
 
 		while (!finished) {

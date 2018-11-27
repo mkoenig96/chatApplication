@@ -382,7 +382,7 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 			@Override
 			public void handle(ActionEvent event) {
 				try {
-					udpConnection.sendMessage(new Date().toString() + " Server wurde gestopt" );
+					udpConnection.sendMessage(new Date().toString() + " Server wurde gestoppt" );
 					chatServer.stop();
 				} catch (Exception e) {
 					log.error("Fehler beim Stoppen des Chat-Servers");
