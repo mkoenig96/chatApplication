@@ -1,27 +1,30 @@
 package edu.hm.dako.chat.clients;
 
+import edu.hm.dako.chat.auditlogServer.TCPServer;
+
 import java.io.*;
 import java.net.*;
 
 public class TcpClient {
 
+  private PrintWriter out;
+  private BufferedReader in;
   private int port;
-  public TcpClient(int port){
+  private InetAddress host;
+  private Socket clientSocket;
+  private ObjectOutputStream oos;
+
+  public TcpClient(int port) throws IOException {
     this.port = port;
+    this.host = InetAddress.getLocalHost();
+    this.clientSocket = new Socket(host.getHostName(), 14785);
+    this.oos = new ObjectOutputStream(this.clientSocket.getOutputStream());
   }
 
-  public void sendMessage() throws Exception {
-    String sentence;
-    String modifiedSentence;
-    BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-    Socket clientSocket = new Socket("localhost", 20313);
-    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-    BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    sentence = inFromUser.readLine();
-    outToServer.writeBytes(sentence + 'n');
-    modifiedSentence = inFromServer.readLine();
-    System.out.println("FROM SERVER: " + modifiedSentence);
-    clientSocket.close();
+
+  public void sendMessage(String message) throws IOException{
+    System.out.println("Sending request to Socket Server");
+    oos.writeObject(message);
   }
 
 
