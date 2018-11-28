@@ -21,17 +21,7 @@ public class AuditlogServer implements Runnable {
         String fileName = "src/main/logs/log1.txt";
         File f = new File(fileName);
 
-        if (f.exists()) {
-            try {
-
-                FileWriter fw = new FileWriter(f,false);
-                BufferedWriter bw = new BufferedWriter(fw);
-               bw.write("Hier Könnte ein beliebiger String stehen zur Beschreibung des Files.");
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (!f.exists()) {
             try {
                 f.createNewFile();
             } catch (IOException e) {
@@ -56,7 +46,7 @@ public class AuditlogServer implements Runnable {
 
     @Override
     public void run() {
-        try (DatagramSocket serverSocket = new DatagramSocket(50900)) {
+        try (DatagramSocket serverSocket = new DatagramSocket(50901)) {
 
             byte[] buffer = new byte[65507];
             while (true) {

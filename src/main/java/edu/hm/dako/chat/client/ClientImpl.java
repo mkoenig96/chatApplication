@@ -38,6 +38,7 @@ public class ClientImpl extends AbstractChatClient {
 						connection, sharedClientData);
 
 			messageListenerThread.start(); //TODO: Serververbindung: Thread clientseitig starten (mk)
+
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}

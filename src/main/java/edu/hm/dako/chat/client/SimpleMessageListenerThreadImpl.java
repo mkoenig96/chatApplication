@@ -25,7 +25,6 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 
 	public SimpleMessageListenerThreadImpl(ClientUserInterface userInterface,
 			Connection con, SharedClientData sharedData) throws SocketException {
-
 		super(userInterface, con, sharedData);
 
 	}
@@ -172,7 +171,12 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 
 		log.debug("SimpleMessageListenerThread gestartet");
 
-		udpConnect.sendMessage(new Date() + " " + "Client-Thread " + "'" + Thread.currentThread().getName() + "'" + " has been started");
+		/*try {
+			this.connection.send(Thread.currentThread().getName());
+		} catch (java.lang.Exception e){
+			e.printStackTrace();
+		}*/
+		//udpConnect.sendMessage(new Date() + " " + "Client-Thread " + "'" + Thread.currentThread().getName() + "'" + " has been started");
 
 		while (!finished) {
 
