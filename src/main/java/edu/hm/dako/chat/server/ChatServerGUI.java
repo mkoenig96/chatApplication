@@ -1,10 +1,14 @@
 package edu.hm.dako.chat.server;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import edu.hm.dako.chat.auditlogServer.TCPServer;
+import edu.hm.dako.chat.clients.TcpClient;
 
 import edu.hm.dako.chat.clients.UdpConnector;
 import javafx.stage.WindowEvent;
@@ -101,6 +105,9 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 
 	private UdpConnector udpConnection;
 
+	private TcpClient tcpClient;
+
+
 	// Daten, die beim Start der GUI uebergeben werden
 	private ServerStartData data = new ServerStartData();
 
@@ -111,13 +118,16 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	/**
 	 * Konstruktion der ServerGUI
 	 */
-	public ChatServerGUI() throws SocketException {
+	public ChatServerGUI() throws IOException {
 		loggedInClientCounter = new AtomicInteger(0);
 		requestCounter = new AtomicInteger(0);
 		startTimeField = createNotEditableTextfield("");
 		receivedRequests = createNotEditableTextfield("");
 		loggedInClients = createNotEditableTextfield("");
 		this.udpConnection = new UdpConnector(40600);
+
+		this.tcpClient = new TcpClient(14785);
+
 	}
 
 	public static void main(String[] args) {
@@ -336,6 +346,13 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 			public void handle(ActionEvent event) {
 				startable = true;
 				udpConnection.sendMessage( "\n" + new Date().toString() + " Server wurde gestartet" );
+
+				try {
+					tcpClient.sendMessage( "\n" + new Date().toString() + " Server wurde gestartet" );
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 				// Eingabeparameter einlesen
 				int serverPort = readServerPort();
 				int sendBufferSize = readSendBufferSize();
@@ -376,13 +393,18 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	/**
 	 * Reaktion auf das Betaetigen des Stop-Buttons
 	 */
-	private void reactOnStopButton() {
+	private void reactOnStopButton() throws IOException {
 
+		System.out.println("onstop");
 		stopButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				try {
+
+
+
 					udpConnection.sendMessage(new Date().toString() + " Server wurde gestoppt" );
+
 					chatServer.stop();
 				} catch (Exception e) {
 					log.error("Fehler beim Stoppen des Chat-Servers");

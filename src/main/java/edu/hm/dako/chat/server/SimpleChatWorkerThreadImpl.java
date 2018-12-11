@@ -38,6 +38,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
   @Override
   public void run() {
+
     String threadNameServer = Thread.currentThread().getName();
     log.debug(
       "ChatWorker-Thread erzeugt, Threadname: " + threadNameServer);
