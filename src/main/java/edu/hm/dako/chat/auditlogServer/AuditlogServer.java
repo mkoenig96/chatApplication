@@ -20,7 +20,7 @@ public class AuditlogServer implements Runnable {
   }
 
   public void writeLog(String message) {
-    String fileName = "C:\\Users\\basst\\Desktop\\chat\\chatApplication\\src\\main\\logs\\log1.txt";
+    String fileName = "src/main/logs/log1.txt"; /*C:\Users\basst\Desktop\chat\chatApplication\src\main\logs\log1.txt*/
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
       writer.write(message + "\n");
