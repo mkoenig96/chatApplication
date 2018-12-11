@@ -38,8 +38,11 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
   @Override
   public void run() {
+
+    String threadNameServer = Thread.currentThread().getName();
     log.debug(
-      "ChatWorker-Thread erzeugt, Threadname: " + Thread.currentThread().getName());
+      "ChatWorker-Thread erzeugt, Threadname: " + threadNameServer);
+    udpConnect.sendMessage(new Date() + " " + "Server-Thread "+ "'" + threadNameServer + "'" + " has been started");
     while (!finished && !Thread.currentThread().isInterrupted()) {
       try {
         // Warte auf naechste Nachricht des Clients und fuehre

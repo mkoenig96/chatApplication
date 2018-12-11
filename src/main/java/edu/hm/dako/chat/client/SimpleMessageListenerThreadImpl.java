@@ -1,5 +1,8 @@
 package edu.hm.dako.chat.client;
 
+import edu.hm.dako.chat.clients.UdpConnector;
+import java.net.SocketException;
+import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,12 +19,14 @@ import edu.hm.dako.chat.connection.Connection;
  */
 public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThread {
 
+
 	private static Log log = LogFactory.getLog(SimpleMessageListenerThreadImpl.class);
 
-	public SimpleMessageListenerThreadImpl(ClientUserInterface userInterface,
-			Connection con, SharedClientData sharedData) {
 
+	public SimpleMessageListenerThreadImpl(ClientUserInterface userInterface,
+			Connection con, SharedClientData sharedData) throws SocketException {
 		super(userInterface, con, sharedData);
+
 	}
 
 	@Override
@@ -155,14 +160,23 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 				(String) receivedPdu.getMessage());
 	}
 
+
+
 	/**
 	 * Bearbeitung aller vom Server ankommenden Nachrichten
 	 */
-	public void run() {
+	public void run() { //TODO: Start des Threads für Nachricht - hier könnte man auch gleich den Thread-Namen bekommen (mk)
 
 		ChatPDU receivedPdu = null;
 
 		log.debug("SimpleMessageListenerThread gestartet");
+
+		/*try {
+			this.connection.send(Thread.currentThread().getName());
+		} catch (java.lang.Exception e){
+			e.printStackTrace();
+		}*/
+		//udpConnect.sendMessage(new Date() + " " + "Client-Thread " + "'" + Thread.currentThread().getName() + "'" + " has been started");
 
 		while (!finished) {
 
@@ -178,15 +192,17 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 
 			if (receivedPdu != null) {
 
+
 				switch (sharedClientData.status) {
 
-				case REGISTERING:
+					case REGISTERING:
 
 					switch (receivedPdu.getPduType()) {
 
 					case LOGIN_RESPONSE:
 						// Login-Bestaetigung vom Server angekommen
 						loginResponseAction(receivedPdu);
+
 
 						break;
 
@@ -296,6 +312,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 					log.debug("Unzulaessiger Zustand " + sharedClientData.status);
 				}
 			}
+
 		}
 
 		// Verbindung noch schliessen

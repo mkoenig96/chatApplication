@@ -2,10 +2,12 @@ package edu.hm.dako.chat.clients;
 
 import edu.hm.dako.chat.auditlogServer.TCPServer;
 
+
 import java.io.*;
 import java.net.*;
 
 public class TcpClient {
+
 
   private PrintWriter out;
   private BufferedReader in;
@@ -25,6 +27,7 @@ public class TcpClient {
   public void sendMessage(String message) throws IOException{
     System.out.println("Sending request to Socket Server");
     oos.writeObject(message);
+
   }
 
 

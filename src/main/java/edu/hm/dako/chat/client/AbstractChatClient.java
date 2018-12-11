@@ -45,7 +45,7 @@ public abstract class AbstractChatClient implements ClientCommunication {
 	protected SharedClientData sharedClientData;
 
 	// Thread, der die ankommenden Nachrichten fuer den Client verarbeitet
-	protected Thread messageListenerThread;
+	protected Thread messageListenerThread; //TODO: Serververbindung: Hier wird die Thread-Variable als Object clientseitig erzeugt (mk)
 
 	/**
 	 * @param userInterface
