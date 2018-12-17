@@ -3,8 +3,8 @@ package edu.hm.dako.chat.server;
 import java.net.SocketException;
 import java.util.Vector;
 
-import edu.hm.dako.chat.UdpAuditlogServer.AuditlogPDU;
-import edu.hm.dako.chat.UdpAuditlogServer.UdpConnector;
+import edu.hm.dako.chat.AuditlogServer.AuditlogPDU;
+import edu.hm.dako.chat.AuditlogServer.UdpConnector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -112,7 +112,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			userName = receivedPdu.getUserName();
 			clientThreadName = receivedPdu.getClientThreadName();
-			Thread.currentThread().setName(receivedPdu.getUserName());
+			//Thread.currentThread().setName(receivedPdu.getUserName());
 			log.debug("Laenge der Clientliste: " + clients.size());
 			serverGuiInterface.incrNumberOfLoggedInClients();
 
@@ -120,10 +120,19 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			// anfragenden) senden
 
 			Vector<String> clientList = clients.getClientNameList();
+
 			pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
-			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
 			sendLoginListUpdateEvent(pdu);
+
+
+
+
+			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
 			udpConnect.sendMessage(pdulog);
+
+
+
+
 			// Login Response senden
 			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
 
@@ -173,7 +182,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Event an Client versenden
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLogoutEventPdu(userName, clientList, receivedPdu);
-			AuditlogPDU pdulog = AuditlogPDU.createLogoutEventPdu(userName,receivedPdu);
+			AuditlogPDU pdulog = AuditlogPDU.createLogoutEventPdu(receivedPdu);
 			clients.changeClientStatus(receivedPdu.getUserName(),
 					ClientConversationStatus.UNREGISTERING);
 			sendLoginListUpdateEvent(pdu);
@@ -224,7 +233,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Liste der betroffenen Clients ermitteln
 			Vector<String> sendList = clients.getClientNameList();
 			ChatPDU pdu = ChatPDU.createChatMessageEventPdu(userName, receivedPdu);
-			AuditlogPDU pdulog = AuditlogPDU.createChatMessageEventPdu(userName, receivedPdu);
+
+			AuditlogPDU pdulog = AuditlogPDU.createChatMessageEventPdu(receivedPdu);
 
 			// Event an Clients senden
 			for (String s : new Vector<String>(sendList)) {

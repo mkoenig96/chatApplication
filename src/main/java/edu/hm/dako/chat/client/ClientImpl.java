@@ -28,7 +28,6 @@ public class ClientImpl extends AbstractChatClient {
 		super(userInterface, serverPort, remoteServerAddress);
 		this.serverPort = serverPort;
 		this.remoteServerAddress = remoteServerAddress;
-
 		Thread.currentThread().setName("Client");
 		threadName = Thread.currentThread().getName();
 

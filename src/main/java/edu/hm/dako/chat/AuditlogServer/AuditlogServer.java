@@ -1,21 +1,24 @@
-package edu.hm.dako.chat.UdpAuditlogServer;
+package edu.hm.dako.chat.AuditlogServer;
 
 import java.io.*;
 import java.net.*;
 
 
-public class UdpAuditlogServer implements Runnable {
+public class AuditlogServer implements Runnable {
 
 
     private int port;
     DatagramSocket serverSocket = new DatagramSocket(this.port);
 
-    public UdpAuditlogServer(int port) throws SocketException {
+    public AuditlogServer(int port) throws SocketException {
         this.port = port;
     }
 
 
     public static void main(String[] args) throws SocketException {
+
+
+
 
         String fileName = "src/main/logs/log1.txt";
         File f = new File(fileName);
@@ -27,7 +30,10 @@ public class UdpAuditlogServer implements Runnable {
                 e.printStackTrace();
             }
         }
-        new Thread(new UdpAuditlogServer(50900)).start();
+
+
+        new Thread(new AuditlogServer(50900)).start();
+
     }
 
 

@@ -50,7 +50,6 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 
 			userInterface.loginComplete();
 
-			Thread.currentThread().setName("Listener" + "-" + sharedClientData.userName);
 			log.debug(
 					"Login-Response-PDU fuer Client " + receivedPdu.getUserName() + " empfangen");
 		}
@@ -79,7 +78,6 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 		log.debug(sharedClientData.userName + " empfaengt Logout-Response-PDU fuer Client "
 				+ receivedPdu.getUserName());
 		sharedClientData.status = ClientConversationStatus.UNREGISTERED;
-
 		userInterface.setSessionStatisticsCounter(sharedClientData.eventCounter.longValue(),
 				sharedClientData.confirmCounter.longValue(), 0, 0, 0);
 
@@ -163,6 +161,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 		ChatPDU receivedPdu = null;
 
 		log.debug("SimpleMessageListenerThread gestartet");
+
 
 		while (!finished) {
 

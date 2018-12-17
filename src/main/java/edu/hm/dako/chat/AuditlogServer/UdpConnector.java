@@ -1,8 +1,7 @@
-package edu.hm.dako.chat.UdpAuditlogServer;
+package edu.hm.dako.chat.AuditlogServer;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Date;
 
 public class UdpConnector {
     private final int port;
@@ -17,7 +16,6 @@ public class UdpConnector {
     public void sendMessage(AuditlogPDU pdu) {
 
         String message = pdu.toString();
-        //pdu.getPduType() + "||" + new Date() + "||" + pdu.getUserName() + "||" + pdu.getClientThreadName() + "||" + pdu.getServerThreadName() + "||" + pdu.getMessage();
 
         try {
 
