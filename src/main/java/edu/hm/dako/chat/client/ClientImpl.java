@@ -29,7 +29,7 @@ public class ClientImpl extends AbstractChatClient {
 		this.serverPort = serverPort;
 		this.remoteServerAddress = remoteServerAddress;
 
-		Thread.currentThread().setName("Client"); //TODO: Serververbindung: Name des Client wird zu Thread zugeordnet und Name per getName() geholt (mk)
+		Thread.currentThread().setName("Client");
 		threadName = Thread.currentThread().getName();
 
 		try {
@@ -37,8 +37,7 @@ public class ClientImpl extends AbstractChatClient {
 			messageListenerThread = new SimpleMessageListenerThreadImpl(userInterface,
 						connection, sharedClientData);
 
-			messageListenerThread.start(); //TODO: Serververbindung: Thread clientseitig starten (mk)
-
+			messageListenerThread.start();
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}

@@ -1,11 +1,9 @@
 package edu.hm.dako.chat.client;
 
-import java.net.SocketException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import edu.hm.dako.chat.auditlogServer.AuditlogServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -31,7 +29,6 @@ public class LogInGuiController implements Initializable {
 	private static Log log = LogFactory.getLog(LogInGuiController.class);
 
 	private String userName;
-	private AuditlogServer adls = new AuditlogServer(50003);
 
 	@FXML
 	private TextField txtUsername;
@@ -50,14 +47,10 @@ public class LogInGuiController implements Initializable {
 
 	private ClientFxGUI appController;
 
-
 	private static final Pattern IPV6_PATTERN = Pattern
 			.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
 	private static final Pattern IPV4_PATTERN = Pattern.compile(
 			"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
-
-	public LogInGuiController() throws SocketException {
-	}
 
 	public void setAppController(ClientFxGUI appController) {
 		this.appController = appController;
@@ -95,11 +88,11 @@ public class LogInGuiController implements Initializable {
 			lblIP.setTextFill(Color.web(SystemConstants.RED_COLOR));
 			return;
 		}
-
 		// IP-Adresse ist korrekt
 		lblIP.setTextFill(Color.web(SystemConstants.BLACK_COLOR));
 
 		// Serverport pruefen
+
 		int serverPort = 0;
 		String valueServerPort = txtServerPort.getText();
 		if (valueServerPort.matches("[0-9]+")) {
