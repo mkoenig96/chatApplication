@@ -1,23 +1,17 @@
 package edu.hm.dako.chat.AuditlogServer;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Scanner;
 
-
-public class AuditlogServer implements Runnable {
-
-
-    private int port;
-    DatagramSocket serverSocket = new DatagramSocket(this.port);
-
-    public AuditlogServer(int port) throws SocketException {
-        this.port = port;
-    }
-
+class AuditlogServer {
 
     public static void main(String[] args) throws SocketException {
 
+        Scanner scanner = new Scanner(System.in);
 
+        System.out.println("AuditlogServer wurde gestartet!");
 
 
         String fileName = "src/main/logs/log1.txt";
@@ -26,43 +20,37 @@ public class AuditlogServer implements Runnable {
         if (!f.exists()) {
             try {
                 f.createNewFile();
+                System.out.println("Es wurde eine neue Datei erzeugt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            System.out.println("Die Datei log1.txt existiert bereits.");
         }
 
 
-        new Thread(new AuditlogServer(50900)).start();
 
-    }
+        System.out.println("Das Protokoll befindet sich im Pfad: " + fileName);
 
+        System.out.println("Gebe für eine UDP Verbindung [1] ein.");
+        System.out.println("Gebe für eine TCP Verbindung [2] ein.");
 
-    public void writeLog(String message) {
-        try {
-            FileWriter fw = new FileWriter("src/main/logs/log1.txt", true);
-            BufferedWriter writer = new BufferedWriter(fw);
-            writer.write(message + "\n");
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+        String eingabe = scanner.nextLine();
 
-    @Override
-    public void run() {
-        try (DatagramSocket serverSocket = new DatagramSocket(50900)) {
-
-            byte[] buffer = new byte[65507];
-            while (true) {
-                DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
-                buffer = new byte[60000];
-                serverSocket.receive(datagramPacket);
-                String receivedMessages = new String(datagramPacket.getData());
-                datagramPacket.setData(new byte[65507]);
-                writeLog(receivedMessages);
+        if (eingabe.equals("1")) {
+            new Thread(new UdpAuditlogServer(50900)).start();
+            System.out.println("UDP Thread gestartet");
+        } else {
+            if (eingabe.equals("2")) {
+                System.out.println("Hier soll der TCP Thread starten");
+                System.out.println("TCP Thread gestartet");
+            } else {
+                System.out.println("Keine Verbindung!");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+
         }
+
+
     }
 }

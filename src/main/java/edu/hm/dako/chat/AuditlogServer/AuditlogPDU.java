@@ -1,6 +1,8 @@
 package edu.hm.dako.chat.AuditlogServer;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.PduType;
@@ -39,12 +41,13 @@ public class AuditlogPDU implements Serializable {
         message = null;
     }
 
+    private String timeStamp = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(new Date());
 
     public String toString() {
-        return "PduType: " + this.pduType + "||" + "userName: " + this.userName
-                + "||" + "clientThreadName: " + this.clientThreadName + "||"
-                + "serverThreadName: " + this.serverThreadName + "||" + "message: " + this.message;
+        return timeStamp + "|" + this.pduType + "|tnC: " + this.clientThreadName + "|tnS: "
+                + this.serverThreadName + "|msg: " +  this.message;
     }
+
 
 
     public void setPduType(PduType pduType) {
