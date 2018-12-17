@@ -5,3 +5,9 @@ PduType: Login-Event||userName: Matze||clientThreadName: Client-Matze||serverThr
 PduType: Login-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: null
 PduType: Chat-Message-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: homo
 PduType: Logout-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: null
+PduType: Logout-Event||userName: JN||clientThreadName: Client-JN||serverThreadName: JN||message: null
+PduType: Logout-Event||userName: Matze||clientThreadName: Client-Matze||serverThreadName: Matze||message: null
+PduType: Login-Event||userName: Matze||clientThreadName: Client-Matze||serverThreadName: Matze||message: null
+PduType: Login-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: null
+PduType: Chat-Message-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: homo
+PduType: Logout-Event||userName: Basti||clientThreadName: Client-Basti||serverThreadName: Basti||message: null

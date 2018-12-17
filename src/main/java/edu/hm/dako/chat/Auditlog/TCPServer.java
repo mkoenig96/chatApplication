@@ -5,16 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import static java.lang.System.out;
 
 
 public class TCPServer {
 
   int port;
-  ServerSocket server = null;
-  Socket client = null;
-  ExecutorService pool = null;
-  int clientcount = 0;
+  private ServerSocket server = null;
+  private ExecutorService pool = null;
 
   public static void main(String[] args) throws IOException {
     TCPServer serverobj = new TCPServer(14785);
@@ -33,9 +31,10 @@ public class TCPServer {
   public void startServer() throws IOException {
 
     server = new ServerSocket(this.port);
+    out.println("Server Booted");
+    out.println("Any client can stop the server by sending -1");
     while (true) {
-      client = server.accept();
-      clientcount++;
+      Socket client = server.accept();
       ServerThread runnable = new ServerThread(client, this);
       pool.execute(runnable);
     }
