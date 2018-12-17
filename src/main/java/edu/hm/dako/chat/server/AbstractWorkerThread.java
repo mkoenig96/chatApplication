@@ -56,7 +56,7 @@ public abstract class AbstractWorkerThread extends Thread {
 	 * @param receivedPdu
 	 *          Empfangene PDU
 	 */
-	protected abstract void loginRequestAction(ChatPDU receivedPdu);
+	protected abstract void loginRequestAction(ChatPDU receivedPdu) throws Exception;
 
 	/**
 	 * Aktion fuer die Behandlung ankommender Logout-Requests: Alle Clients
@@ -65,7 +65,7 @@ public abstract class AbstractWorkerThread extends Thread {
 	 * @param receivedPdu
 	 *          Empfangene PDU
 	 */
-	protected abstract void logoutRequestAction(ChatPDU receivedPdu);
+	protected abstract void logoutRequestAction(ChatPDU receivedPdu) throws Exception;
 
 	/**
 	 * Aktion fuer die Behandlung ankommender ChatMessage-Requests: Chat-Nachricht

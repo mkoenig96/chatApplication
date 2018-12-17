@@ -74,14 +74,6 @@ public class AuditlogPDU implements Serializable {
         return userName;
     }
 
-    public String getClientThreadName() {
-        return (clientThreadName);
-    }
-
-    public String getServerThreadName() {
-        return (serverThreadName);
-    }
-
     public String getMessage() {
         return (message);
     }

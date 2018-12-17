@@ -1,8 +1,11 @@
 package edu.hm.dako.chat.server;
 
-import java.net.SocketException;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Vector;
 
+import edu.hm.dako.chat.AuditlogServer.Selectors;
+import edu.hm.dako.chat.AuditlogServer.TcpConnector;
 import edu.hm.dako.chat.AuditlogServer.UdpConnector;
 import edu.hm.dako.chat.AuditlogServer.AuditlogPDU;
 import org.apache.commons.logging.Log;
@@ -19,7 +22,7 @@ import edu.hm.dako.chat.connection.EndOfFileException;
 /**
  * Worker-Thread zur serverseitigen Bedienung einer Session mit einem Client.
  * Jedem Chat-Client wird serverseitig ein Worker-Thread zugeordnet.
- * 
+ *
  * @author Peter Mandl
  *
  */
@@ -28,13 +31,25 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 	private static Log log = LogFactory.getLog(SimpleChatWorkerThreadImpl.class);
 	private static int instanceCounter = 0;
 	private UdpConnector udpConnect;
+	private TcpConnector tcpConnect;
 
 	public SimpleChatWorkerThreadImpl(Connection con, SharedChatClientList clients,
-			SharedServerCounter counter, ChatServerGuiInterface serverGuiInterface) throws SocketException {
+			SharedServerCounter counter, ChatServerGuiInterface serverGuiInterface) throws IOException {
 
 		super(con, clients, counter, serverGuiInterface);
+
 		instanceCounter++;
-		udpConnect = new UdpConnector(40000 + instanceCounter);
+		System.out.println(Selectors.getUDP());
+		System.out.println(Selectors.getTCP());
+		if(Selectors.getTCP()){
+			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
+            System.out.println("in TCP");
+
+        } else {
+			udpConnect = new UdpConnector(40000 + instanceCounter);
+            System.out.println("in UDP");
+
+        }
 	}
 
 	@Override
@@ -57,7 +72,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	/**
 	 * Senden eines Login-List-Update-Event an alle angemeldeten Clients
-	 * 
+	 *
 	 * @param pdu
 	 *          Zu sendende PDU
 	 */
@@ -94,7 +109,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 	}
 
 	@Override
-	protected void loginRequestAction(ChatPDU receivedPdu) {
+	protected void loginRequestAction(ChatPDU receivedPdu) throws Exception {
 
 		ChatPDU pdu;
 		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
@@ -128,7 +143,12 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 
 			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
-			udpConnect.sendMessage(pdulog);
+
+			if(Selectors.getTCP()){
+				tcpConnect.sendMessage(pdulog);
+			} else {
+				udpConnect.sendMessage(pdulog);
+			}
 
 
 
@@ -166,7 +186,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 	}
 
 	@Override
-	protected void logoutRequestAction(ChatPDU receivedPdu) {
+	protected void logoutRequestAction(ChatPDU receivedPdu) throws Exception {
 
 		ChatPDU pdu;
 		logoutCounter.getAndIncrement();
@@ -186,7 +206,13 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			clients.changeClientStatus(receivedPdu.getUserName(),
 					ClientConversationStatus.UNREGISTERING);
 			sendLoginListUpdateEvent(pdu);
-			udpConnect.sendMessage(pdulog);
+
+			if(Selectors.getTCP()){
+				tcpConnect.sendMessage(pdulog);
+			} else {
+				udpConnect.sendMessage(pdulog);
+			}
+
 			serverGuiInterface.decrNumberOfLoggedInClients();
 
 			// Der Thread muss hier noch warten, bevor ein Logout-Response gesendet
@@ -244,7 +270,12 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 							&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
-						udpConnect.sendMessage(pdulog);
+						if(Selectors.getTCP()){
+							tcpConnect.sendMessage(pdulog);
+						} else {
+							udpConnect.sendMessage(pdulog);
+
+						}
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());
 						eventCounter.getAndIncrement();
@@ -317,7 +348,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	/**
 	 * Antwort-PDU fuer den initiierenden Client aufbauen und senden
-	 * 
+	 *
 	 * @param eventInitiatorClient
 	 *          Name des Clients
 	 */
@@ -346,7 +377,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	/**
 	 * Prueft, ob Clients aus der Clientliste geloescht werden koennen
-	 * 
+	 *
 	 * @return boolean, true: Client geloescht, false: Client nicht geloescht
 	 */
 	private boolean checkIfClientIsDeletable() {

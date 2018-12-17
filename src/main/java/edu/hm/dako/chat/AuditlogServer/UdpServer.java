@@ -7,12 +7,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class UdpAuditlogServer implements Runnable {
+public class UdpServer implements Runnable {
 
     private int port;
     DatagramSocket serverSocket = new DatagramSocket(this.port);
 
-    public UdpAuditlogServer(int port) throws SocketException {
+    public UdpServer(int port) throws SocketException {
         this.port = port;
     }
 
