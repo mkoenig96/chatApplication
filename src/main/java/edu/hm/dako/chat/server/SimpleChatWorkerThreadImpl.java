@@ -92,11 +92,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void loginRequestAction(ChatPDU receivedPdu) {
-		try {
-			tcpClient.sendMessage("hallo das ist ein test");
-		} catch (java.lang.Exception e){
-			e.printStackTrace();
-		}
+
 		ChatPDU pdu;
 		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
 
@@ -124,6 +120,13 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
 			sendLoginListUpdateEvent(pdu);
+
+			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
+			try {
+				tcpClient.sendMessage(pdulog);
+			} catch (java.lang.Exception e){
+				e.printStackTrace();
+			}
 
 
 			// Login Response senden
@@ -181,6 +184,13 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			sendLoginListUpdateEvent(pdu);
 			serverGuiInterface.decrNumberOfLoggedInClients();
 
+			AuditlogPDU pdulog = AuditlogPDU.createLogoutEventPdu(userName, receivedPdu);
+			try {
+				tcpClient.sendMessage(pdulog);
+			} catch (java.lang.Exception e){
+				e.printStackTrace();
+			}
+
 			// Der Thread muss hier noch warten, bevor ein Logout-Response gesendet
 			// wird, da sich sonst ein Client abmeldet, bevor er seinen letzten Event
 			// empfangen hat. das funktioniert nicht bei einer grossen Anzahl an
@@ -229,6 +239,12 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Liste der betroffenen Clients ermitteln
 			Vector<String> sendList = clients.getClientNameList();
 			ChatPDU pdu = ChatPDU.createChatMessageEventPdu(userName, receivedPdu);
+			AuditlogPDU pdulog = AuditlogPDU.createChatMessageEventPdu(userName, receivedPdu);
+			try {
+				tcpClient.sendMessage(pdulog);
+			} catch (java.lang.Exception e){
+				e.printStackTrace();
+			}
 
 			// Event an Clients senden
 			for (String s : new Vector<String>(sendList)) {

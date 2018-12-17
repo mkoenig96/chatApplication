@@ -1,12 +1,9 @@
 package edu.hm.dako.chat.clients;
 
-import edu.hm.dako.chat.auditlogServer.TCPServer;
-
-
 import java.io.*;
 import java.net.*;
 
-public class TcpClient {
+public class TCPClient {
 
 
   private PrintWriter out;
@@ -16,7 +13,7 @@ public class TcpClient {
   private Socket clientSocket;
   private ObjectOutputStream oos;
 
-  public TcpClient(int port) throws IOException {
+  public TCPClient(int port) throws IOException {
     this.port = port;
     this.host = InetAddress.getLocalHost();
     this.clientSocket = new Socket(host.getHostName(), 14785);
