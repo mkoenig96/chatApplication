@@ -3,8 +3,8 @@ package edu.hm.dako.chat.server;
 import java.net.SocketException;
 import java.util.Vector;
 
-import edu.hm.dako.chat.AuditlogServer.AuditlogPDU;
 import edu.hm.dako.chat.AuditlogServer.UdpConnector;
+import edu.hm.dako.chat.AuditlogServer.AuditlogPDU;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
