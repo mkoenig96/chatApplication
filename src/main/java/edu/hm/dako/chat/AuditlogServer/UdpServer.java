@@ -10,10 +10,13 @@ import java.net.SocketException;
 public class UdpServer implements Runnable {
 
     private int port;
+    public static boolean isRunning;
+
     DatagramSocket serverSocket = new DatagramSocket(this.port);
 
     public UdpServer(int port) throws SocketException {
         this.port = port;
+        isRunning = true;
     }
 
 
@@ -32,13 +35,13 @@ public class UdpServer implements Runnable {
     public void run() {
         try (DatagramSocket serverSocket = new DatagramSocket(50900)) {
 
-            byte[] buffer = new byte[65507];
+            byte[] buffer = new byte[128];
             while (true) {
                 DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
-                buffer = new byte[60000];
+                buffer = new byte[128];
                 serverSocket.receive(datagramPacket);
                 String receivedMessages = new String(datagramPacket.getData());
-                datagramPacket.setData(new byte[65507]);
+                datagramPacket.setData(new byte[128]);
                 writeLog(receivedMessages);
             }
         } catch (IOException e) {

@@ -1,13 +1,19 @@
 package edu.hm.dako.chat.AuditlogServer;
 
+import edu.hm.dako.chat.connection.Connection;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.Scanner;
 
-class AuditlogServer {
+public class AuditlogServer {
+
+
 
     public static void main(String[] args) throws SocketException {
+
+
 
         Scanner scanner = new Scanner(System.in);
 
@@ -38,20 +44,15 @@ class AuditlogServer {
         String eingabe = scanner.nextLine();
 
         if (eingabe.equals("1")) {
-            new Selectors(true, false);
-            Selectors.setUDP();
             new Thread(new UdpServer(50900)).start();
             System.out.println("UDP Thread gestartet");
         } else {
             if (eingabe.equals("2")) {
-                new Selectors(false, true);
                 try {
                     new TcpServer(50800).startServer();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
                 System.out.println("TCP Thread gestartet");
             } else {
                 System.out.println("Keine Verbindung!");

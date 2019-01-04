@@ -41,15 +41,14 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 		instanceCounter++;
 		System.out.println(Selectors.getUDP());
 		System.out.println(Selectors.getTCP());
-		if(Selectors.getTCP()){
-			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
+
+			//tcpConnect = new TcpConnector(new Socket("localhost", 50800));
             System.out.println("in TCP");
 
-        } else {
-			udpConnect = new UdpConnector(40000 + instanceCounter);
-            System.out.println("in UDP");
 
-        }
+			udpConnect = new UdpConnector(40000 + instanceCounter);
+
+
 	}
 
 	@Override
@@ -144,11 +143,10 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
 
-			if(Selectors.getTCP()){
-				tcpConnect.sendMessage(pdulog);
-			} else {
+
+				//tcpConnect.sendMessage(pdulog);
 				udpConnect.sendMessage(pdulog);
-			}
+
 
 
 
@@ -207,11 +205,10 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 					ClientConversationStatus.UNREGISTERING);
 			sendLoginListUpdateEvent(pdu);
 
-			if(Selectors.getTCP()){
-				tcpConnect.sendMessage(pdulog);
-			} else {
-				udpConnect.sendMessage(pdulog);
-			}
+
+				//tcpConnect.sendMessage(pdulog);
+			udpConnect.sendMessage(pdulog);
+
 
 			serverGuiInterface.decrNumberOfLoggedInClients();
 
@@ -270,12 +267,10 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 							&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
-						if(Selectors.getTCP()){
-							tcpConnect.sendMessage(pdulog);
-						} else {
-							udpConnect.sendMessage(pdulog);
 
-						}
+							//tcpConnect.sendMessage(pdulog);
+						udpConnect.sendMessage(pdulog);
+
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());
 						eventCounter.getAndIncrement();

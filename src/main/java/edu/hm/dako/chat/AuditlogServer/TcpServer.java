@@ -11,13 +11,13 @@ import static java.lang.System.out;
 public class TcpServer {
 
     int port;
+    public static boolean isRunning;
     private ServerSocket server = null;
-    private ExecutorService pool = null;
 
 
     TcpServer(int port) {
         this.port = port;
-        pool = Executors.newFixedThreadPool(5);
+
     }
 
 
@@ -29,8 +29,7 @@ public class TcpServer {
         out.println("Any client can stop the server by sending -1");
         while (true) {
             Socket client = server.accept();
-            ServerThread runnable = new ServerThread(client, this);
-            pool.execute(runnable);
+            new Thread(new ServerThread(client, this)).start();
         }
 
     }
@@ -66,12 +65,14 @@ public class TcpServer {
         @Override
         public void run() {
             try {
-                while (true) {
-
+                while (!Thread.currentThread().isInterrupted()) {
                     String zeile = is.readUTF();
                     writeLog(zeile);
+                    Thread.sleep(1000);
                 }
             } catch (java.io.IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

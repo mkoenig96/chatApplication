@@ -35,6 +35,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+
+
 /**
  * Benutzeroberflaeche zum Starten des Chat-Servers
  * 
@@ -325,11 +327,9 @@ public class ChatServerGUI extends Application implements ChatServerGuiInterface
 	 */
 	private void reactOnStartButton() {
 		startButton.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
-
-				startable = true;
+			startable = true;
 				// Eingabeparameter einlesen
 				int serverPort = readServerPort();
 				int sendBufferSize = readSendBufferSize();
