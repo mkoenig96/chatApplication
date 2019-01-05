@@ -42,11 +42,11 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 		System.out.println(Selectors.getUDP());
 		System.out.println(Selectors.getTCP());
 
-			//tcpConnect = new TcpConnector(new Socket("localhost", 50800));
+			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
             System.out.println("in TCP");
 
 
-			udpConnect = new UdpConnector(40000 + instanceCounter);
+			//udpConnect = new UdpConnector(40000 + instanceCounter);
 
 
 	}
@@ -141,11 +141,11 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 
 
-			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
+			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu, Thread.currentThread().getName());
 
 
-				//tcpConnect.sendMessage(pdulog);
-				udpConnect.sendMessage(pdulog);
+				tcpConnect.sendMessage(pdulog);
+				//udpConnect.sendMessage(pdulog);
 
 
 
@@ -206,8 +206,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			sendLoginListUpdateEvent(pdu);
 
 
-				//tcpConnect.sendMessage(pdulog);
-			udpConnect.sendMessage(pdulog);
+				tcpConnect.sendMessage(pdulog);
+			//udpConnect.sendMessage(pdulog);
 
 
 			serverGuiInterface.decrNumberOfLoggedInClients();
@@ -268,8 +268,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
 
-							//tcpConnect.sendMessage(pdulog);
-						udpConnect.sendMessage(pdulog);
+							tcpConnect.sendMessage(pdulog);
+						//udpConnect.sendMessage(pdulog);
 
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
 						clients.incrNumberOfSentChatEvents(client.getUserName());

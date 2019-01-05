@@ -44,7 +44,7 @@ public class AuditlogPDU implements Serializable {
     private String timeStamp = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(new Date());
 
     public String toString() {
-        return timeStamp + "|" + this.pduType + "|tnC: " + this.clientThreadName + "|tnS: "
+        return timeStamp + "|" + this.pduType + "|Cn: " + userName + "|tnC: " + this.clientThreadName + "|tnS: "
                 + this.serverThreadName + "|msg: " +  this.message;
     }
 
@@ -101,13 +101,13 @@ public class AuditlogPDU implements Serializable {
      * @param receivedPdu Empfangene PDU (Login-Request-PDU)
      * @return Erzeugte PDU
      */
-    public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu) {
+    public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu, String listenerthreadname) {
 
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.LOGIN_EVENT);
         pdu.setUserName(receivedPdu.getUserName());
         pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(receivedPdu.getClientThreadName());
+        pdu.setClientThreadName(listenerthreadname);
         return pdu;
     }
 

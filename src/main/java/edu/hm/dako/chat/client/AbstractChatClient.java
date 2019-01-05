@@ -108,7 +108,7 @@ public abstract class AbstractChatClient implements ClientCommunication {
 		ChatPDU requestPdu = new ChatPDU();
 		requestPdu.setPduType(PduType.LOGIN_REQUEST);
 		requestPdu.setClientStatus(sharedClientData.status);
-		Thread.currentThread().setName("Client-" + userName);
+		Thread.currentThread().setName(messageListenerThread.getName());
 		requestPdu.setClientThreadName(Thread.currentThread().getName());
 		requestPdu.setUserName(userName);
 		try {

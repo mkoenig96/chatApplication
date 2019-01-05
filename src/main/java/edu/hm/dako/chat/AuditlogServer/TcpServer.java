@@ -68,11 +68,8 @@ public class TcpServer {
                 while (!Thread.currentThread().isInterrupted()) {
                     String zeile = is.readUTF();
                     writeLog(zeile);
-                    Thread.sleep(1000);
                 }
             } catch (java.io.IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
