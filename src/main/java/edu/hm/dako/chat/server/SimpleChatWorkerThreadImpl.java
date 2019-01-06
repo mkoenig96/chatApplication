@@ -42,11 +42,11 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 		System.out.println(Selectors.getUDP());
 		System.out.println(Selectors.getTCP());
 
-			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
-            System.out.println("in TCP");
+			//tcpConnect = new TcpConnector(new Socket("localhost", 50800));
+            //System.out.println("in TCP");
 
 
-			//udpConnect = new UdpConnector(40000 + instanceCounter);
+			udpConnect = new UdpConnector(40000 + instanceCounter);
 
 
 	}
@@ -144,8 +144,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu, Thread.currentThread().getName());
 
 
-				tcpConnect.sendMessage(pdulog);
-				//udpConnect.sendMessage(pdulog);
+				//tcpConnect.sendMessage(pdulog);
+				udpConnect.sendMessage(pdulog);
 
 
 
@@ -206,8 +206,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			sendLoginListUpdateEvent(pdu);
 
 
-				tcpConnect.sendMessage(pdulog);
-			//udpConnect.sendMessage(pdulog);
+				//tcpConnect.sendMessage(pdulog);
+			udpConnect.sendMessage(pdulog);
 
 
 			serverGuiInterface.decrNumberOfLoggedInClients();
@@ -257,60 +257,76 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			Vector<String> sendList = clients.getClientNameList();
 			ChatPDU pdu = ChatPDU.createChatMessageEventPdu(userName, receivedPdu);
 
-			AuditlogPDU pdulog = AuditlogPDU.createChatMessageEventPdu(receivedPdu);
+			if (pdu.getMessage().equals("shutdownAuditlog")) {
+				AuditlogPDU shutdownLog = AuditlogPDU.createShutdownEventPdu(receivedPdu);
 
-			// Event an Clients senden
-			for (String s : new Vector<String>(sendList)) {
-				client = clients.getClient(s);
 				try {
-					if ((client != null)
-							&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
-						pdu.setUserName(client.getUserName());
-						client.getConnection().send(pdu);
+					//if (Selectors.getTCP()) {
+						//tcpConnect.sendMessage(shutdownLog);
+					//} else {
+						udpConnect.sendMessage(shutdownLog);
+					//}
+				} catch (Exception e) {
+					log.debug("Senden der Shutdown-Nachricht nicht möglich");
+				}
 
-							tcpConnect.sendMessage(pdulog);
-						//udpConnect.sendMessage(pdulog);
+			} else {
 
-						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
-						clients.incrNumberOfSentChatEvents(client.getUserName());
-						eventCounter.getAndIncrement();
-						log.debug(userName + ": EventCounter erhoeht = " + eventCounter.get()
-								+ ", Aktueller ConfirmCounter = " + confirmCounter.get()
-								+ ", Anzahl gesendeter ChatMessages von dem Client = "
-								+ receivedPdu.getSequenceNumber());
+				AuditlogPDU pdulog = AuditlogPDU.createChatMessageEventPdu(receivedPdu);
+
+				// Event an Clients senden
+				for (String s : new Vector<String>(sendList)) {
+					client = clients.getClient(s);
+					try {
+						if ((client != null)
+								&& (client.getStatus() != ClientConversationStatus.UNREGISTERED)) {
+							pdu.setUserName(client.getUserName());
+							client.getConnection().send(pdu);
+
+							//tcpConnect.sendMessage(pdulog);
+							udpConnect.sendMessage(pdulog);
+
+							log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
+							clients.incrNumberOfSentChatEvents(client.getUserName());
+							eventCounter.getAndIncrement();
+							log.debug(userName + ": EventCounter erhoeht = " + eventCounter.get()
+									+ ", Aktueller ConfirmCounter = " + confirmCounter.get()
+									+ ", Anzahl gesendeter ChatMessages von dem Client = "
+									+ receivedPdu.getSequenceNumber());
+						}
+					} catch (Exception e) {
+						log.debug("Senden einer Chat-Event-PDU an " + client.getUserName()
+								+ " nicht moeglich");
+						ExceptionHandler.logException(e);
 					}
-				} catch (Exception e) {
-					log.debug("Senden einer Chat-Event-PDU an " + client.getUserName()
-							+ " nicht moeglich");
-					ExceptionHandler.logException(e);
 				}
+
+				client = clients.getClient(receivedPdu.getUserName());
+				if (client != null) {
+					ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(
+							receivedPdu.getUserName(), 0, 0, 0, 0,
+							client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+							(System.nanoTime() - client.getStartTime()));
+
+					if (responsePdu.getServerTime() / 1000000 > 100) {
+						log.debug(Thread.currentThread().getName()
+								+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
+								+ responsePdu.getServerTime() + " ns = "
+								+ responsePdu.getServerTime() / 1000000 + " ms");
+					}
+
+					try {
+						client.getConnection().send(responsePdu);
+						log.debug(
+								"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
+					} catch (Exception e) {
+						log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName()
+								+ " nicht moeglich");
+						ExceptionHandler.logExceptionAndTerminate(e);
+					}
+				}
+				log.debug("Aktuelle Laenge der Clientliste: " + clients.size());
 			}
-
-			client = clients.getClient(receivedPdu.getUserName());
-			if (client != null) {
-				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(
-						receivedPdu.getUserName(), 0, 0, 0, 0,
-						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-						(System.nanoTime() - client.getStartTime()));
-
-				if (responsePdu.getServerTime() / 1000000 > 100) {
-					log.debug(Thread.currentThread().getName()
-							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
-							+ responsePdu.getServerTime() + " ns = "
-							+ responsePdu.getServerTime() / 1000000 + " ms");
-				}
-
-				try {
-					client.getConnection().send(responsePdu);
-					log.debug(
-							"Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
-				} catch (Exception e) {
-					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName()
-							+ " nicht moeglich");
-					ExceptionHandler.logExceptionAndTerminate(e);
-				}
-			}
-			log.debug("Aktuelle Laenge der Clientliste: " + clients.size());
 		}
 	}
 

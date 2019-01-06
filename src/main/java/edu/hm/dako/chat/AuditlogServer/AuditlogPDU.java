@@ -128,5 +128,17 @@ public class AuditlogPDU implements Serializable {
         return pdu;
     }
 
+    public static AuditlogPDU createShutdownEventPdu(ChatPDU receivedPdu) {
+        AuditlogPDU pdu = new AuditlogPDU();
+        pdu.setPduType(PduType.SHUTDOWN_EVENT);
+        pdu.setServerThreadName(Thread.currentThread().getName());
+        pdu.setClientThreadName(receivedPdu.getClientThreadName());
+        pdu.setMessage(receivedPdu.getMessage());
+        return pdu;
+    }
+
+
+
+
 
 }

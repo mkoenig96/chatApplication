@@ -19,6 +19,8 @@ public class AuditlogServer {
 
         System.out.println("AuditlogServer wurde gestartet!");
 
+        AuditlogServer auditlogServer = new AuditlogServer();
+
 
         String fileName = "src/main/logs/log1.txt";
         File f = new File(fileName);
@@ -44,12 +46,12 @@ public class AuditlogServer {
         String eingabe = scanner.nextLine();
 
         if (eingabe.equals("1")) {
-            new Thread(new UdpServer(50900)).start();
+            new Thread(new UdpServer(50900, auditlogServer)).start();
             System.out.println("UDP Thread gestartet");
         } else {
             if (eingabe.equals("2")) {
                 try {
-                    new TcpServer(50800).startServer();
+                    new TcpServer(50800, auditlogServer).startServer();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -62,5 +64,8 @@ public class AuditlogServer {
         }
 
 
+    }
+    public  void terminateAuditlogServer() {
+        System.exit(0);
     }
 }
