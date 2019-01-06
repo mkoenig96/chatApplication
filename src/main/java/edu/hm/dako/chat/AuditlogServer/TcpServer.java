@@ -69,7 +69,6 @@ public class TcpServer {
                     String zeile = is.readUTF();
                     writeLog(zeile);
                 }
-                Thread.currentThread().stop();
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }

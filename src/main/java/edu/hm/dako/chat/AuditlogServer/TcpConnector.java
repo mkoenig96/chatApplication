@@ -19,8 +19,9 @@ public class TcpConnector {
         os.writeUTF(message);
     }
 
-    public void stopThread(){
+    public void stopThread() throws IOException {
         System.out.println(Thread.currentThread().getName());
+        socket.close();
         Thread.currentThread().stop();
     }
 
