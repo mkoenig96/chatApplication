@@ -10,15 +10,11 @@ import java.net.SocketException;
 public class UdpServer implements Runnable {
 
     private int port;
-    public static boolean isRunning;
-
-    DatagramSocket serverSocket = new DatagramSocket(this.port);
+    private DatagramSocket serverSocket = new DatagramSocket(this.port);
 
     public UdpServer(int port) throws SocketException {
         this.port = port;
-        isRunning = true;
     }
-
 
     public void writeLog(String message) {
         try {
