@@ -42,7 +42,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 		System.out.println(Selectors.getUDP());
 		System.out.println(Selectors.getTCP());
 
-			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
+			tcpConnect = new TcpConnector(new Socket("192.168.178.46", 50800));
             System.out.println("in TCP");
 
 
@@ -207,7 +207,6 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 
 				tcpConnect.sendMessage(pdulog);
-				tcpConnect.stopThread();
 			//udpConnect.sendMessage(pdulog);
 
 
@@ -238,6 +237,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 			clients.finish(receivedPdu.getUserName());
 			log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von "
 					+ receivedPdu.getUserName() + ": " + clients.size());
+			tcpConnect.stopThread();
 		}
 	}
 
