@@ -42,7 +42,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 		System.out.println(Selectors.getUDP());
 		System.out.println(Selectors.getTCP());
 
-			tcpConnect = new TcpConnector(new Socket("192.168.178.46", 50800));
+			tcpConnect = new TcpConnector(new Socket("localhost", 50800));
             System.out.println("in TCP");
 
 

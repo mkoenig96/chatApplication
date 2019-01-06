@@ -21,7 +21,7 @@ public class TcpConnector {
 
     public void stopThread(){
         System.out.println(Thread.currentThread().getName());
-        Thread.currentThread().interrupt();
+        Thread.currentThread().stop();
     }
 
 
