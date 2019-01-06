@@ -19,6 +19,10 @@ public class TcpConnector {
         os.writeUTF(message);
     }
 
+    public void stopThread(){
+        System.out.println(Thread.currentThread().getName());
+        Thread.currentThread().interrupt();
+    }
 
 
 }
