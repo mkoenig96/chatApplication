@@ -19,7 +19,7 @@ public class UdpConnector {
 
         try {
 
-            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("192.168.178.46"), 50900);
+            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getLocalHost(), 50900);
             clientSocket.send(datagramPacket);
 
 

@@ -22,7 +22,7 @@ public class TcpConnector {
     public void stopThread() throws IOException {
         System.out.println(Thread.currentThread().getName());
         socket.close();
-        Thread.currentThread().stop();
+        Thread.currentThread().interrupt();
     }
 
 
