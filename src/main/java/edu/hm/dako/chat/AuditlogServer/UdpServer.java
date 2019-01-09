@@ -12,8 +12,11 @@ public class UdpServer implements Runnable {
     private int port;
     private DatagramSocket serverSocket = new DatagramSocket(this.port);
 
-    public UdpServer(int port) throws SocketException {
+    AuditlogServer auditlogServer;
+
+    public UdpServer(int port, AuditlogServer auditlogServer) throws SocketException {
         this.port = port;
+        this.auditlogServer = auditlogServer;
     }
 
     public void writeLog(String message) {
@@ -37,8 +40,14 @@ public class UdpServer implements Runnable {
                 buffer = new byte[128];
                 serverSocket.receive(datagramPacket);
                 String receivedMessages = new String(datagramPacket.getData());
-                datagramPacket.setData(new byte[128]);
-                writeLog(receivedMessages);
+                if (receivedMessages.contains("shutdownAuditlog")) {
+                    this.auditlogServer.terminateAuditlogServer();
+                    System.exit(0);
+                } else {
+                    datagramPacket.setData(new byte[128]);
+                    writeLog(receivedMessages);
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();

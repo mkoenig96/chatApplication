@@ -13,12 +13,13 @@ public class TcpServer {
     int port;
     public static boolean isRunning;
     private ServerSocket server = null;
+    private AuditlogServer auditlogServer;
 
 
-    TcpServer(int port) {
-        this.port = port;
-
-    }
+        TcpServer(int port, AuditlogServer auditlogServer) {
+            this.port = port;
+            this.auditlogServer = auditlogServer;
+        }
 
 
 
@@ -67,7 +68,13 @@ public class TcpServer {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     String zeile = is.readUTF();
-                    writeLog(zeile);
+                    if (zeile.contains("shutdownAuditlog")) {
+                        client.close();
+                        this.server.auditlogServer.terminateAuditlogServer();
+                        System.exit(0);
+                    } else {
+                        writeLog(zeile);
+                    }
                 }
             } catch (java.io.IOException e) {
                 e.printStackTrace();

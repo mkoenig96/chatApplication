@@ -18,12 +18,4 @@ public class TcpConnector {
         String message = pdu.toString();
         os.writeUTF(message);
     }
-
-    public void stopThread() throws IOException {
-        System.out.println(Thread.currentThread().getName());
-        socket.close();
-        Thread.currentThread().interrupt();
-    }
-
-
 }
