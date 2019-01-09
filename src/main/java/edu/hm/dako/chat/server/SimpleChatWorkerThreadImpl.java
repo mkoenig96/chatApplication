@@ -261,15 +261,15 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
             if (pdu.getMessage().equals("shutdownAuditlog")) {
                 AuditlogPDU shutdownLog = AuditlogPDU.createShutdownEventPdu(receivedPdu);
-
+                AuditlogPDU shutdown = AuditlogPDU.createChatMessageEventPdu(receivedPdu);
                 try {
-                    AuditlogPDU shutdown = AuditlogPDU.createChatMessageEventPdu(receivedPdu);
-                    shutdown.setMessage("auditlogServer wurde beendet");
                     if (connectionType == 2) {
+                        shutdown.setMessage("auditlogServer wurde beendet");
                         tcpConnect.sendMessage(shutdown);
                         tcpConnect.sendMessage(shutdownLog);
                     } else {
-                        tcpConnect.sendMessage(shutdown);
+                        shutdown.setMessage("auditlogServer wurde beendet");
+                        udpConnect.sendMessage(shutdown);
                         udpConnect.sendMessage(shutdownLog);
                     }
                 } catch (Exception e) {
