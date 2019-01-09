@@ -1,68 +1,73 @@
 package edu.hm.dako.chat.AuditlogServer;
 
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 import static java.lang.System.out;
 
 
-public class TcpServer {
+class TcpServer {
 
-    int port;
-    public static boolean isRunning;
-    private ServerSocket server = null;
+    //serverport
+    private int port;
+
+    // supplys informations of the running AuditlogServer
     private AuditlogServer auditlogServer;
 
+    /**
+     * @param port           of the server
+     * @param auditlogServer informations of the running AuditlogServer
+     */
+    TcpServer(int port, AuditlogServer auditlogServer) {
+        this.port = port;
+        this.auditlogServer = auditlogServer;
+    }
 
-        TcpServer(int port, AuditlogServer auditlogServer) {
-            this.port = port;
-            this.auditlogServer = auditlogServer;
-        }
-
-
-
-    public void startServer() throws IOException {
-
-        server = new ServerSocket(this.port);
+    /**
+     * starts the TcpServer-Thread, waits for incoming connections and creates a new ServerThread for every client
+     *
+     * @throws IOException if the Server-Thread cant be started
+     */
+    void startServer() throws IOException {
+        //creates ServerSocket
+        ServerSocket server = new ServerSocket(this.port);
         out.println("Server Booted");
         out.println("Any client can stop the server by sending -1");
-        while (true) {
+
+        //waiting for clients to connect and starts a ServerThread for each client
+        while (!Thread.currentThread().isInterrupted()) {
             Socket client = server.accept();
             new Thread(new ServerThread(client, this)).start();
         }
-
     }
 
+    /**
+     * A ServerThread is started for every incoming connection
+     */
     private static class ServerThread implements Runnable {
 
         TcpServer server;
         Socket client;
         DataInputStream is;
 
+        /**
+         * @param client clientsocket that is connected
+         * @param server the running TcpServer
+         * @throws IOException if connection cant be established
+         */
         ServerThread(Socket client, TcpServer server) throws IOException {
-
             this.client = client;
             this.server = server;
             is = new DataInputStream(client.getInputStream());
-
         }
 
 
-
-
-        public void writeLog(String message) {
-            try {
-                FileWriter fw = new FileWriter("src/main/logs/log1.txt", true);
-                BufferedWriter writer = new BufferedWriter(fw);
-                writer.write(message + "\n");
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+        /**
+         * runs the ServerThread and waits for incoming messages to be logged
+         * runs writeLog method if there is a new message
+         */
         @Override
         public void run() {
             try {
@@ -73,16 +78,13 @@ public class TcpServer {
                         this.server.auditlogServer.terminateAuditlogServer();
                         System.exit(0);
                     } else {
-                        writeLog(zeile);
+                        Logger.writeLog(zeile);
                     }
                 }
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
         }
-
-
-
     }
 }
 

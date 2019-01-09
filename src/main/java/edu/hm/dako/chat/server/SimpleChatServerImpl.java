@@ -37,8 +37,7 @@ public class SimpleChatServerImpl extends AbstractChatServer {
 	 * @param socket
 	 * @param serverGuiInterface
 	 */
-	public SimpleChatServerImpl(ExecutorService executorService,
-			ServerSocketInterface socket, ChatServerGuiInterface serverGuiInterface) {
+	public SimpleChatServerImpl(ExecutorService executorService, ServerSocketInterface socket, ChatServerGuiInterface serverGuiInterface) {
 		log.debug("SimpleChatServerImpl konstruiert");
 		this.executorService = executorService;
 		this.socket = socket;

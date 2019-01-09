@@ -17,23 +17,25 @@ import edu.hm.dako.chat.common.PduType;
 public class AuditlogPDU implements Serializable {
 
 
-    // Kommandos bzw. PDU-Typen
+    // pduType
     private PduType pduType;
 
-    // Login-Name des Clients
+    //client login name
     private String userName;
 
-    // Name des Client-Threads, der den Request absendet
+    // name of the clientThread
     private String clientThreadName;
 
-    // Name des Threads, der den Request im Server
+    // name of the serverThread
     private String serverThreadName;
 
-    // Nutzdaten (eigentliche Chat-Nachricht in Textform)
+    // chatmessage
     private String message;
 
 
-    public AuditlogPDU() {
+    //constructor
+    private AuditlogPDU() {
+        //pduType is undefined in the beginning
         pduType = PduType.UNDEFINED;
         userName = null;
         clientThreadName = null;
@@ -41,52 +43,59 @@ public class AuditlogPDU implements Serializable {
         message = null;
     }
 
+    //creates a string timestamp for the log-event
     private String timeStamp = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(new Date());
 
+    //returns the AuditlogPDU data as String
     public String toString() {
         return timeStamp + "|" + this.pduType + "|Cn: " + userName + "|tnC: " + this.clientThreadName + "|tnS: "
                 + this.serverThreadName + "|msg: " +  this.message;
     }
 
 
-
-    public void setPduType(PduType pduType) {
+    //setter PduType
+    private void setPduType(PduType pduType) {
         this.pduType = pduType;
     }
 
+    //setter userName
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public void setClientThreadName(String threadName) {
+    //setter clientThreadName
+    private void setClientThreadName(String threadName) {
         this.clientThreadName = threadName;
     }
 
-    public void setServerThreadName(String threadName) {
+    //setter serverThreadName
+    private void setServerThreadName(String threadName) {
         this.serverThreadName = threadName;
     }
 
+    //setter message text
     public void setMessage(String msg) {
         this.message = msg;
     }
 
+    //getter for client username
     public String getUserName() {
         return userName;
     }
 
+    //getter for message text
     public String getMessage() {
         return (message);
     }
 
 
     /**
-     * Erzeugen einer Logout-Event-PDU
+     * create loggout event PDU
      *
-     * @param receivedPdu Empfangene PDU (Logout-Request-PDU)
-     * @return Erzeugte PDU
+     * @param receivedPdu received PDU (Logout-Request-PDU)
+     * @return created PDU
      */
     public static AuditlogPDU createLogoutEventPdu(ChatPDU receivedPdu) {
-
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.LOGOUT_EVENT);
         pdu.setUserName(receivedPdu.getUserName());
@@ -96,10 +105,10 @@ public class AuditlogPDU implements Serializable {
     }
 
     /**
-     * Erzeugen einer Login-Event-PDU
+     * Create a login Event PDU
      *
-     * @param receivedPdu Empfangene PDU (Login-Request-PDU)
-     * @return Erzeugte PDU
+     * @param receivedPdu received PDU (Login-Request-PDU)
+     * @return created PDU
      */
     public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu, String listenerthreadname) {
 
@@ -112,10 +121,10 @@ public class AuditlogPDU implements Serializable {
     }
 
     /**
-     * Erzeugen einer Chat-Message-Event-PDU
+     * Create a Chat-Message-Event-PDU
      *
      * @param receivedPdu (Chat-Message-Request-PDU)
-     * @return Erzeugte PDU
+     * @return created PDU
      */
     public static AuditlogPDU createChatMessageEventPdu(ChatPDU receivedPdu) {
 
@@ -128,6 +137,12 @@ public class AuditlogPDU implements Serializable {
         return pdu;
     }
 
+    /**
+     * Create a shutdwon-event-PDU
+     *
+     * @param receivedPdu (shutdown-event-PDU)
+     * @return created PDU
+     */
     public static AuditlogPDU createShutdownEventPdu(ChatPDU receivedPdu) {
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.SHUTDOWN_EVENT);
