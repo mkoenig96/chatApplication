@@ -99,7 +99,7 @@ public class AuditlogPDU implements Serializable {
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.LOGOUT_EVENT);
         pdu.setUserName(receivedPdu.getUserName());
-        pdu.setServerThreadName(Thread.currentThread().getName());
+        pdu.setServerThreadName(receivedPdu.getServerThreadName());
         pdu.setClientThreadName(receivedPdu.getClientThreadName());
         return pdu;
     }
@@ -110,13 +110,13 @@ public class AuditlogPDU implements Serializable {
      * @param receivedPdu received PDU (Login-Request-PDU)
      * @return created PDU
      */
-    public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu, String listenerthreadname) {
+    public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu) {
 
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.LOGIN_EVENT);
         pdu.setUserName(receivedPdu.getUserName());
-        pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(listenerthreadname);
+        pdu.setServerThreadName(receivedPdu.getServerThreadName());
+        pdu.setClientThreadName(receivedPdu.getClientThreadName());
         return pdu;
     }
 
@@ -130,7 +130,7 @@ public class AuditlogPDU implements Serializable {
 
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.CHAT_MESSAGE_EVENT);
-        pdu.setServerThreadName(Thread.currentThread().getName());
+        pdu.setServerThreadName(receivedPdu.getServerThreadName());
         pdu.setClientThreadName(receivedPdu.getClientThreadName());
         pdu.setUserName(receivedPdu.getUserName());
         pdu.setMessage(receivedPdu.getMessage());
@@ -146,7 +146,7 @@ public class AuditlogPDU implements Serializable {
     public static AuditlogPDU createShutdownEventPdu(ChatPDU receivedPdu) {
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.SHUTDOWN_EVENT);
-        pdu.setServerThreadName(Thread.currentThread().getName());
+        pdu.setServerThreadName(receivedPdu.getServerThreadName());
         pdu.setClientThreadName(receivedPdu.getClientThreadName());
         pdu.setMessage(receivedPdu.getMessage());
         return pdu;

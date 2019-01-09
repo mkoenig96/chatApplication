@@ -138,7 +138,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 
 
-            AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu, Thread.currentThread().getName());
+            AuditlogPDU pdulog = AuditlogPDU.createLoginEventPdu(receivedPdu);
 
 
             if (connectionType == 2) {

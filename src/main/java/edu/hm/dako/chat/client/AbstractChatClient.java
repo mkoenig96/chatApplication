@@ -17,7 +17,7 @@ import edu.hm.dako.chat.tcp.TcpConnectionFactory;
 
 /**
  * Gemeinsame Funktionalitaet fuer alle Client-Implementierungen.
- * 
+ *
  * @author Peter Mandl
  *
  */
@@ -89,7 +89,7 @@ public abstract class AbstractChatClient implements ClientCommunication {
 
 	/**
 	 * Ergaenzt ConnectionFactory um Logging-Funktionalitaet
-	 * 
+	 *
 	 * @param connectionFactory
 	 *          ConnectionFactory
 	 * @return Dekorierte ConnectionFactory
@@ -108,7 +108,7 @@ public abstract class AbstractChatClient implements ClientCommunication {
 		ChatPDU requestPdu = new ChatPDU();
 		requestPdu.setPduType(PduType.LOGIN_REQUEST);
 		requestPdu.setClientStatus(sharedClientData.status);
-		Thread.currentThread().setName(messageListenerThread.getName());
+		Thread.currentThread().setName("Client-" + userName);
 		requestPdu.setClientThreadName(Thread.currentThread().getName());
 		requestPdu.setUserName(userName);
 		try {
@@ -176,4 +176,4 @@ public abstract class AbstractChatClient implements ClientCommunication {
 	public boolean isLoggedOut() {
 		return (sharedClientData.status == ClientConversationStatus.UNREGISTERED);
 	}
-}
+} 
