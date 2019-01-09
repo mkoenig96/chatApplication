@@ -25,6 +25,7 @@ public class TcpConnector {
      * @throws Exception if the messsage cant be sent
      * sends a message to the AuditlogServer
      */
+
     public void sendMessage(AuditlogPDU pdu) throws Exception {
         String message = pdu.toString();
         os.writeUTF(message);

@@ -34,7 +34,7 @@ public class AuditlogPDU implements Serializable {
 
 
     //constructor
-    private AuditlogPDU() {
+    public AuditlogPDU() {
         //pduType is undefined in the beginning
         pduType = PduType.UNDEFINED;
         userName = null;
