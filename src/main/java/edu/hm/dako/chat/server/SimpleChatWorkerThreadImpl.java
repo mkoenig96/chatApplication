@@ -1,11 +1,13 @@
 package edu.hm.dako.chat.server;
 
-import java.net.Socket;
+import java.io.IOException;
+import java.net.*;
 import java.util.Vector;
 
 import edu.hm.dako.chat.AuditlogServer.TcpConnector;
 import edu.hm.dako.chat.AuditlogServer.UdpConnector;
 import edu.hm.dako.chat.AuditlogServer.AuditlogPDU;
+import edu.hm.dako.chat.AuditlogServer.UdpThread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,11 +41,11 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
         instanceCounter++;
         try {
-            Socket tcpSocket = new Socket("192.168.178.21", 50800);
+            Socket tcpSocket = new Socket("localhost", 50800);
             tcpConnect = new TcpConnector(tcpSocket);
             connectionType = 2;
         } catch (Exception e){
-            udpConnect = new UdpConnector(40000 + instanceCounter);
+            //udpConnect = new UdpConnector(40000 + instanceCounter);
             connectionType = 1;
         }
     }
@@ -104,6 +106,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
         }
     }
 
+
     @Override
     protected void loginRequestAction(ChatPDU receivedPdu) throws Exception {
 
@@ -144,7 +147,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
             if (connectionType == 2) {
                 tcpConnect.sendMessage(pdulog);
             } else {
-                udpConnect.sendMessage(pdulog);
+                new Thread(new UdpThread(pdulog.toString())).start();
             }
 
 
@@ -208,7 +211,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
             if (connectionType == 2) {
                 tcpConnect.sendMessage(pdulog);
             } else {
-                udpConnect.sendMessage(pdulog);
+                new Thread(new UdpThread(pdulog.toString())).start();
+
             }
 
 
@@ -292,7 +296,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
                             if (connectionType == 2) {
                                 tcpConnect.sendMessage(pdulog);
                             } else {
-                                udpConnect.sendMessage(pdulog);
+                                //udpConnect.sendMessage(pdulog);
+                                new Thread(new UdpThread(pdulog.toString())).start();
                             }
 
                             log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
@@ -525,4 +530,6 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
             ExceptionHandler.logExceptionAndTerminate(e);
         }
     }
+
+
 }

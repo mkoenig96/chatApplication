@@ -25,10 +25,11 @@ public class UdpServer implements Runnable {
      */
     @Override
     public void run() {
-        try (DatagramSocket serverSocket = new DatagramSocket(50900)) {
+        try {
             byte[] buffer = new byte[128];
             //awaits a incomming package and logs it to the logfile
             while (true) {
+                DatagramSocket serverSocket = new DatagramSocket(50900);
                 DatagramPacket datagramPacket = new DatagramPacket(buffer, 0, buffer.length);
                 buffer = new byte[128];
                 serverSocket.receive(datagramPacket);
@@ -41,6 +42,7 @@ public class UdpServer implements Runnable {
                 } else {
                     datagramPacket.setData(new byte[128]);
                     Logger.writeLog(receivedMessages);
+                    serverSocket.close();
                 }
             }
         } catch (IOException e) {

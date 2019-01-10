@@ -8,7 +8,7 @@ import java.net.*;
  */
 public class UdpConnector {
     private DatagramSocket clientSocket;
-
+    private static int messageCount = 0;
     /**
      * constructor for the UdpConnector (UDP-Client)
      *
@@ -16,7 +16,7 @@ public class UdpConnector {
      * @throws SocketException if connection to the socket cant be established
      */
     public UdpConnector(int port) throws SocketException {
-        this.clientSocket = new DatagramSocket(port);
+        this.clientSocket = new DatagramSocket(40000);
     }
 
     /**
@@ -26,7 +26,7 @@ public class UdpConnector {
     public void sendMessage(AuditlogPDU pdu) {
         String message = pdu.toString();
         try {
-            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("192.168.178.21"), 50900);
+            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("localhost"), 50900);
             clientSocket.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
