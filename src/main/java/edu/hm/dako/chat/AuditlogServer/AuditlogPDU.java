@@ -8,136 +8,181 @@ import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.PduType;
 
 /**
- * <p/>
- * Nachrichtenaufbau fuer Chat-Protokoll (fuer alle Nachrichtentypen: Request,
- * Response, Event, Confirm)
+ * A PDU to collect the data. *
  *
- * @author Mandl
+ * @author Sebastian Waterloo, Matthias König, Justin Bitterlich, Sophie Wienhues
+ * @version 1.0
  */
 public class AuditlogPDU implements Serializable {
 
+  // Commands or PDU types
+  private PduType pduType;
 
-    // Kommandos bzw. PDU-Typen
-    private PduType pduType;
+  // Login name of clients
+  private String userName;
 
-    // Login-Name des Clients
-    private String userName;
+  // Name of Client-Threads, that sends the request
+  private String clientThreadName;
 
-    // Name des Client-Threads, der den Request absendet
-    private String clientThreadName;
+  // Name of Threads, that works on the server
+  private String serverThreadName;
 
-    // Name des Threads, der den Request im Server
-    private String serverThreadName;
+  // usedata
+  private String message;
 
-    // Nutzdaten (eigentliche Chat-Nachricht in Textform)
-    private String message;
+  // constructor
+  public AuditlogPDU() {
+    pduType = PduType.UNDEFINED;
+    userName = null;
+    clientThreadName = null;
+    serverThreadName = null;
+    message = null;
+  }
 
+  private String timeStamp = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(new Date());
 
-    public AuditlogPDU() {
-        pduType = PduType.UNDEFINED;
-        userName = null;
-        clientThreadName = null;
-        serverThreadName = null;
-        message = null;
-    }
+  // Auditlog toString method
+  public String toString() {
+    return timeStamp
+        + "|"
+        + this.pduType
+        + "|tnC: "
+        + this.clientThreadName
+        + "|tnS: "
+        + this.serverThreadName
+        + "|msg: "
+        + this.message;
+  }
 
-    private String timeStamp = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(new Date());
+  /**
+   * Sets the type of the Pdu
+   *
+   * @param pduType
+   */
+  public void setPduType(PduType pduType) {
+    this.pduType = pduType;
+  }
 
-    public String toString() {
-        return timeStamp + "|" + this.pduType + "|tnC: " + this.clientThreadName + "|tnS: "
-          + this.serverThreadName + "|msg: " +  this.message;
-    }
+  /**
+   * sets the username
+   *
+   * @param userName
+   */
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
+  /**
+   * sets the client thread name
+   *
+   * @param threadName
+   */
+  public void setClientThreadName(String threadName) {
+    this.clientThreadName = threadName;
+  }
 
+  /**
+   * sets the serve
+   *
+   * @param threadName
+   */
+  public void setServerThreadName(String threadName) {
+    this.serverThreadName = threadName;
+  }
 
-    public void setPduType(PduType pduType) {
-        this.pduType = pduType;
-    }
+  /**
+   * sets the message
+   *
+   * @param msg
+   */
+  public void setMessage(String msg) {
+    this.message = msg;
+  }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  /**
+   * getter for username
+   *
+   * @return username
+   */
+  public String getUserName() {
+    return userName;
+  }
 
-    public void setClientThreadName(String threadName) {
-        this.clientThreadName = threadName;
-    }
+  /**
+   * getter for message
+   *
+   * @return message
+   */
+  public String getMessage() {
+    return (message);
+  }
 
-    public void setServerThreadName(String threadName) {
-        this.serverThreadName = threadName;
-    }
+  /**
+   * Producing a logout event pdu
+   *
+   * @param receivedPdu received PDU (Logout-Request-PDU)
+   * @return produced PDU
+   */
+  public static AuditlogPDU createLogoutEventPdu(ChatPDU receivedPdu) {
 
-    public void setMessage(String msg) {
-        this.message = msg;
-    }
+    AuditlogPDU pdu = new AuditlogPDU();
+    pdu.setPduType(PduType.LOGOUT_EVENT);
+    pdu.setUserName(receivedPdu.getUserName());
+    pdu.setServerThreadName(Thread.currentThread().getName());
+    pdu.setClientThreadName(receivedPdu.getClientThreadName());
+    return pdu;
+  }
 
-    public String getUserName() {
-        return userName;
-    }
+  /**
+   * Producing a login event pdu
+   *
+   * @param receivedPdu received PDU (Login-Request-PDU)
+   * @return produced PDU
+   */
+  public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu) {
 
-    public String getMessage() {
-        return (message);
-    }
+    AuditlogPDU pdu = new AuditlogPDU();
+    pdu.setPduType(PduType.LOGIN_EVENT);
+    pdu.setUserName(receivedPdu.getUserName());
+    pdu.setServerThreadName(Thread.currentThread().getName());
+    pdu.setClientThreadName(receivedPdu.getClientThreadName());
+    return pdu;
+  }
 
+  /**
+   * Producing a Chat-Message-Event-PDU
+   *
+   * @param receivedPdu (Chat-Message-Request-PDU)
+   * @return produced PDU
+   */
+  public static AuditlogPDU createChatMessageEventPdu(ChatPDU receivedPdu) {
 
-    /**
-     * Erzeugen einer Logout-Event-PDU
-     *
-     * @param receivedPdu Empfangene PDU (Logout-Request-PDU)
-     * @return Erzeugte PDU
-     */
-    public static AuditlogPDU createLogoutEventPdu(ChatPDU receivedPdu) {
+    AuditlogPDU pdu = new AuditlogPDU();
+    pdu.setPduType(PduType.CHAT_MESSAGE_EVENT);
+    pdu.setServerThreadName(Thread.currentThread().getName());
+    pdu.setClientThreadName(receivedPdu.getClientThreadName());
+    pdu.setUserName(receivedPdu.getUserName());
+    pdu.setMessage(receivedPdu.getMessage());
+    return pdu;
+  }
 
-        AuditlogPDU pdu = new AuditlogPDU();
-        pdu.setPduType(PduType.LOGOUT_EVENT);
-        pdu.setUserName(receivedPdu.getUserName());
-        pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(receivedPdu.getClientThreadName());
-        return pdu;
-    }
+  /**
+   * creates shutdown event
+   *
+   * @param receivedPdu
+   * @return shutdown pdu
+   */
+  public static AuditlogPDU createShutdownEventPdu(ChatPDU receivedPdu) {
 
-    /**
-     * Erzeugen einer Login-Event-PDU
-     *
-     * @param receivedPdu Empfangene PDU (Login-Request-PDU)
-     * @return Erzeugte PDU
-     */
-    public static AuditlogPDU createLoginEventPdu(ChatPDU receivedPdu) {
+    AuditlogPDU pdu = new AuditlogPDU();
 
-        AuditlogPDU pdu = new AuditlogPDU();
-        pdu.setPduType(PduType.LOGIN_EVENT);
-        pdu.setUserName(receivedPdu.getUserName());
-        pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(receivedPdu.getClientThreadName());
-        return pdu;
-    }
+    pdu.setPduType(PduType.SHUTDOWN_EVENT);
 
-    /**
-     * Erzeugen einer Chat-Message-Event-PDU
-     *
-     * @param receivedPdu (Chat-Message-Request-PDU)
-     * @return Erzeugte PDU
-     */
-    public static AuditlogPDU createChatMessageEventPdu(ChatPDU receivedPdu) {
+    pdu.setServerThreadName(Thread.currentThread().getName());
 
-        AuditlogPDU pdu = new AuditlogPDU();
-        pdu.setPduType(PduType.CHAT_MESSAGE_EVENT);
-        pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(receivedPdu.getClientThreadName());
-        pdu.setUserName(receivedPdu.getUserName());
-        pdu.setMessage(receivedPdu.getMessage());
-        return pdu;
-    }
+    pdu.setClientThreadName(receivedPdu.getClientThreadName());
 
-    public static AuditlogPDU createShutdownEventPdu(ChatPDU receivedPdu) {
-        AuditlogPDU pdu = new AuditlogPDU();
-        pdu.setPduType(PduType.SHUTDOWN_EVENT);
-        pdu.setServerThreadName(Thread.currentThread().getName());
-        pdu.setClientThreadName(receivedPdu.getClientThreadName());
-        pdu.setMessage(receivedPdu.getMessage());
-        return pdu;
-    }
-
-
-
-
+    pdu.setMessage(receivedPdu.getMessage());
+    return pdu;
+  }
 }
