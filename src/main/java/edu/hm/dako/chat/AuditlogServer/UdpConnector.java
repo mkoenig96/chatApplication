@@ -26,7 +26,7 @@ public class UdpConnector {
     public void sendMessage(AuditlogPDU pdu) {
         String message = pdu.toString();
         try {
-            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getLocalHost(), 50900);
+            DatagramPacket datagramPacket = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("192.168.190.92"), 50900);
             clientSocket.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();

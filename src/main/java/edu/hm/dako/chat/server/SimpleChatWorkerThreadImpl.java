@@ -39,7 +39,7 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
         instanceCounter++;
         try {
-            Socket tcpSocket = new Socket("localhost", 50800);
+            Socket tcpSocket = new Socket("192.168.190.92", 50800);
             tcpConnect = new TcpConnector(tcpSocket);
             connectionType = 2;
         } catch (Exception e){

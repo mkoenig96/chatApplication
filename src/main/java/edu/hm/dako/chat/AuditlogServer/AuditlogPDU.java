@@ -99,7 +99,7 @@ public class AuditlogPDU implements Serializable {
         AuditlogPDU pdu = new AuditlogPDU();
         pdu.setPduType(PduType.LOGOUT_EVENT);
         pdu.setUserName(receivedPdu.getUserName());
-        pdu.setServerThreadName(receivedPdu.getServerThreadName());
+        pdu.setServerThreadName(Thread.currentThread().getName());
         pdu.setClientThreadName(receivedPdu.getClientThreadName());
         return pdu;
     }
